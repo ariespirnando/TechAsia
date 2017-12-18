@@ -1,0 +1,168 @@
+
+1. Concurrent Computing mengerjakan beberapa tugas tanpa menunggu tugas sebelumnya selesai dan membuat lebih banyak tugas(thread) 
+   yang dapat dikerjakan bersama dalam 1 core (Dengan Catatan task tersebut tidak saling mempengaruhi).
+   sedangan kan Parallel computing, sebuah tugas dipecahkan menjadi pecahan tugas(thread) yang lebih kecil, dikerjakan bersama 
+   pada beberapa core dan hasilnya digabungkan 
+   saat selesai diproses. Secara umum Concurent dan Paraller Computing berbeda pada arsitektur proses pengerjaan suatu task
+2  a. without Concurent
+	import java.util.Arrays;
+	public class looping {
+		public static void main(String[] arg){
+			long waktuawalSerial, waktuakhirSerial;
+			int tampung[] = new int[2000];
+			waktuawalSerial = System.nanoTime();
+				for(int i=0; i<2000;i++){
+					tampung[i] = i+1;
+				}
+			System.out.println(Arrays.toString(tampung)); 
+			waktuakhirSerial = System.nanoTime() - waktuawalSerial;
+			System.out.println(waktuakhirSerial/1000000d);
+		}
+	}
+	/*
+	Hasil = 4.726932 ms
+	*/
+
+  b. With Concurent
+	import java.util.Arrays;
+	public class looping2 extends Thread{
+		int id, to, from;
+		static int tampung[] = new int[2000];
+		public looping2(int a, int b, int c){
+			this.id = a;
+			this.from = b;
+			this.to = c;
+		}
+		public void run(){
+        		for(int i=from; i<to; i++){ 
+        			tampung[i] = i+1;
+        		}
+    		}
+		public static void main(String[] args){
+			long waktuawalSerial, waktuakhirSerial; 
+			looping2 t1 = new looping2(1,0,1000);
+			looping2 t2 = new looping2(2,1000,2000);   
+		
+			waktuawalSerial = System.nanoTime();
+        		t1.start();
+        		t2.start(); 
+        		try {
+            			t1.join();
+            			t2.join();   
+        		} catch (Exception e) {
+            			System.out.println(e);
+        		}  
+		
+			System.out.println(Arrays.toString(tampung)); 
+        		waktuakhirSerial = System.nanoTime() - waktuawalSerial;
+			System.out.println(waktuakhirSerial/1000000d);
+		}
+	
+	}
+	
+	/*
+	Hasil = 6.326514 ms;
+	*/
+
+3. 	import java.util.Arrays;
+	import java.util.Scanner;
+	public class inputData { 
+	public static int[] SelectionSort(int[] arr){ 
+        	for (int i = 0; i < arr.length - 1; i++){
+            		int index = i;
+            		for (int j = i + 1; j < arr.length; j++)
+                		if (arr[j] < arr[index]) 
+                    			index = j;
+      
+            			int smallerNumber = arr[index];  
+            			arr[index] = arr[i];
+            			arr[i] = smallerNumber;
+        	}
+        	return arr;
+    	}
+	
+	public static int[] InsertionSort(int[] arr){
+        	int temp;
+        	for (int i = 1; i < arr.length; i++) {
+            		for(int j = i ; j > 0 ; j--){
+                		if(arr[j] < arr[j-1]){
+                    			temp = arr[j];
+                    			arr[j] = arr[j-1];
+                    			arr[j-1] = temp;
+                		}
+            		}
+        	}
+        	return arr;
+    	}
+	
+	public static int[] bubbleSort(int[] arr) {  
+        	int n = arr.length;  
+        	int temp = 0;  
+        	for(int i=0; i < n; i++){  
+             		for(int j=1; j < (n-i); j++){  
+                  		if(arr[j-1] > arr[j]){   
+                         		temp = arr[j-1];  
+                         		arr[j-1] = arr[j];  
+                         		arr[j] = temp;  
+                 		}    
+             		}  
+         	}  
+        	return arr;
+    	}  
+	
+	public static void main(String[] args){
+		Scanner masukan = new Scanner(System.in);
+		int tampung[] = new int[20];
+		int a;
+		for(int i=0; i<20; i++){
+			System.out.print("input nilai :");
+			a = masukan.nextInt();
+			if(a%2==0){
+				System.out.println("Oops, only accept odd numbers");
+				i--;
+			}else{
+				tampung[i] = a;
+			}
+		} 
+		System.out.println();
+		System.out.println("Data befor Sorting");
+		System.out.println(Arrays.toString(tampung));
+		long waktuawalSerial, waktuakhirSerial;
+		
+		waktuawalSerial = System.nanoTime();
+		System.out.println("Selection Sort");
+		int[] selSort = SelectionSort(tampung); 
+		System.out.println(Arrays.toString(selSort));
+		waktuakhirSerial = System.nanoTime() - waktuawalSerial;
+		System.out.println("Time :"+waktuakhirSerial/1000000d);
+		
+		waktuawalSerial = System.nanoTime();
+		System.out.println("Insertion Sort");
+		int[] insSort = InsertionSort(tampung); 
+		System.out.println(Arrays.toString(insSort));
+		waktuakhirSerial = System.nanoTime() - waktuawalSerial;
+		System.out.println("Time :"+waktuakhirSerial/1000000d);
+		
+		waktuawalSerial = System.nanoTime();
+		System.out.println("Buble Sort");
+		int[] bublSort = bubbleSort(tampung); 
+		System.out.println(Arrays.toString(bublSort));
+		waktuakhirSerial = System.nanoTime() - waktuawalSerial;
+		System.out.println("Time :"+waktuakhirSerial/1000000d); 
+	}
+	}
+	
+	/*
+	
+	Data Input [1, 3, 5, 9, 7, 11, 31, 5, 25, 45, 53, 23, 13, 7, 35, 9, 95, 99, 75, 741]
+	Hasil
+	Selection Sort  : 0.113706 ms
+	Insertion Sort  : 0.120545 ms
+	Buble Sort 	: 0.128668 ms
+	*/
+
+4.	Berdasarkan hasil, algoritma buble sort memiliki kecepatan terlambat hal ini terjadi karna data 
+	yang diinput atau data yang akan disortir melakukan beberapa kali pengecekan dan beberapa kali iterasi ke bawah secara berulang , 
+	semakin komplexs & semakin banyak data pada algoritma buble sort maka waktu yang dihasilkan cukup lama, 
+	sedangkan algoritma Selection Sort memiliki kecepatan tercepat karna hanya mengecek angka sekarang dengan 
+	angka lainya serta langsung melakukan penyusunan ankga
